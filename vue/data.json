@@ -1,0 +1,13 @@
+{
+  "books": [
+    { "id": 1, "title": "1984", "year": 1949, "author": "George Orwell" },
+    { "id": 2, "title": "O Fim da Eternidade", "year": 1955, "author": "Isaac Asimov" },
+    { "id": 3, "title": "Azincourt", "year": 2008, "author": "Bernard Cornwell" }
+  ],
+  "authors": [
+    { "id": 1, "name": "George Orwell" },
+    { "id": 2, "name": "Isaac Asimov" },
+    { "id": 3, "name": "Bernard Cornwell" },
+    { "id": 4, "name": "Terry Patchett"}
+  ]
+}
