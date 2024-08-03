@@ -46,5 +46,9 @@ class AuthorPublic(AuthorSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
+class AuthorUpdate(BaseModel):
+    name: str | None = None
+
+
 class AuthorList(BaseModel):
     authors: list[AuthorPublic]
