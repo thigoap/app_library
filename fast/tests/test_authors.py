@@ -108,7 +108,10 @@ def test_patch_author(client, token, author):
         json={'name': 'Isaac Asimov'},
     )
     assert response.status_code == HTTPStatus.OK
-    assert response.json()['name'] == 'isaac asimov'
+    assert response.json() == {
+        'name': 'isaac asimov',
+        'id': author.id
+    }
 
 
 def test_patch_author_empty_string_400(client, token, author):

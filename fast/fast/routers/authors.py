@@ -28,7 +28,7 @@ router = APIRouter(prefix='/authors', tags=['authors'])
 @router.post('/', response_model=AuthorPublic)
 def create_author(
     author: AuthorSchema,
-    # user: CurrentUser,
+    user: CurrentUser,
     session: Session,
 ):
     check_existing_authors(session, author)
@@ -79,7 +79,7 @@ def read_author(author_id: int, session: Session):
 def patch_author(
     author_id: int,
     session: Session,
-    # user: CurrentUser,
+    user: CurrentUser,
     author: AuthorUpdate,
 ):
     db_author = session.scalar(select(Author).where(Author.id == author_id))
@@ -100,9 +100,8 @@ def patch_author(
     # for key, value in author.model_dump(exclude_unset=True).items():
     #     setattr(db_author, key, value)
     if author.name:
-        db_author = Author(name=sanitize(author.name))
+        db_author.name = sanitize(author.name)
 
-    session.add(db_author)
     session.commit()
     session.refresh(db_author)
 
@@ -113,7 +112,7 @@ def patch_author(
 def delete_author(
     author_id: int,
     session: Session,
-    # user: CurrentUser
+    user: CurrentUser
 ):
     author = session.scalar(select(Author).where(Author.id == author_id))
 
