@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_column, registry
+from sqlalchemy import ForeignKey, func
+from sqlalchemy.orm import Mapped, mapped_column, registry, relationship
 
 table_registry = registry()
 
@@ -28,9 +28,9 @@ class Author:
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     name: Mapped[str]
-    # books: Mapped[list['Book']] = relationship(
-    #     init=False, back_populates='authors', cascade='all, delete-orphan'
-    # )
+    books: Mapped[list['Book']] = relationship(
+        init=False, back_populates='author', cascade='all, delete-orphan'
+    )
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
@@ -39,18 +39,18 @@ class Author:
     )
 
 
-# @table_registry.mapped_as_dataclass
-# class Book:
-#     __tablename__ = 'books'
+@table_registry.mapped_as_dataclass
+class Book:
+    __tablename__ = 'books'
 
-#     id: Mapped[int] = mapped_column(init=False, primary_key=True)
-#     year: Mapped[int]
-#     title: Mapped[str]
-#     author_id: Mapped[int] = mapped_column(ForeignKey('authors.id'))
-#     author: Mapped[Author] = relationship(init=False, back_populates='books')
-#     created_at: Mapped[datetime] = mapped_column(
-#         init=False, server_default=func.now()
-#     )
-#     updated_at: Mapped[datetime] = mapped_column(
-#         init=False, server_default=func.now(), onupdate=func.now()
-#     )
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    year: Mapped[int]
+    title: Mapped[str]
+    author_id: Mapped[int] = mapped_column(ForeignKey('authors.id'))
+    author: Mapped[Author] = relationship(init=False, back_populates='books')
+    created_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now(), onupdate=func.now()
+    )
