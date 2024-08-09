@@ -108,10 +108,7 @@ def test_patch_author(client, token, author):
         json={'name': 'Isaac Asimov'},
     )
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {
-        'name': 'isaac asimov',
-        'id': author.id
-    }
+    assert response.json() == {'name': 'isaac asimov', 'id': author.id}
 
 
 def test_patch_author_empty_string_400(client, token, author):
@@ -166,8 +163,7 @@ def test_delete_author(session, client, token):
 
 def test_delete_author_not_found_404(client, token):
     response = client.delete(
-        f'/authors/{10}',
-        headers={'Authorization': f'Bearer {token}'}
+        f'/authors/{10}', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.status_code == HTTPStatus.NOT_FOUND

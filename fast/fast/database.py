@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
-from fast.models import Author, User
+from fast.models import Author, Book, User
 from fast.settings import Settings
 from fast.utils.sanitize import sanitize
 
@@ -64,8 +64,34 @@ def check_existing_authors(session, author):
         select(Author).where((Author.name == sanitize(author.name)))
     )
     if db_author:
-        if db_author.name == sanitize(author.name):
-            raise HTTPException(
-                status_code=HTTPStatus.CONFLICT,
-                detail='Author already exists',
-            )
+        # if db_author.name == sanitize(author.name):
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Author already exists',
+        )
+
+
+def check_existing_books_from_author(session, book):
+    db_book = session.scalar(
+        select(Book).where(
+            (Book.title == sanitize(book.title))
+            & (Book.author_id == (book.author_id))
+        )
+    )
+    if db_book:
+        # if db_book.title == sanitize(book.title):
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Book from this author already exists',
+        )
+
+
+def check_existing_author_by_id(session, book):
+    db_author = session.scalar(
+        select(Author).where((Author.id == book.author_id))
+    )
+    if not db_author:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Author does not exist in the database',
+        )

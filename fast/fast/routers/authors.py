@@ -86,8 +86,7 @@ def patch_author(
 
     if not db_author:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail='Author not found.'
+            status_code=HTTPStatus.NOT_FOUND, detail='Author not found.'
         )
     if not sanitize(author.name):
         raise HTTPException(
@@ -109,11 +108,7 @@ def patch_author(
 
 
 @router.delete('/{author_id}', response_model=Message)
-def delete_author(
-    author_id: int,
-    session: Session,
-    user: CurrentUser
-):
+def delete_author(author_id: int, session: Session, user: CurrentUser):
     author = session.scalar(select(Author).where(Author.id == author_id))
 
     if not author:

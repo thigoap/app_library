@@ -52,3 +52,24 @@ class AuthorUpdate(BaseModel):
 
 class AuthorList(BaseModel):
     authors: list[AuthorPublic]
+
+
+class BookSchema(BaseModel):
+    year: int
+    title: str
+    author_id: int
+
+
+class BookPublic(BookSchema):
+    id: int
+    model_config = ConfigDict(from_attributes=True)
+
+
+class BookUpdate(BaseModel):
+    year: int | None = None
+    title: str | None = None
+    author_id: int | None = None
+
+
+class BookList(BaseModel):
+    books: list[BookPublic]

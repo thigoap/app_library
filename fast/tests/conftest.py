@@ -7,7 +7,7 @@ from sqlalchemy.pool import StaticPool
 
 from fast.app import app
 from fast.database import get_session
-from fast.models import Author, User, table_registry
+from fast.models import Author, Book, User, table_registry
 from fast.security import get_password_hash
 
 
@@ -93,3 +93,14 @@ def author(session):
     session.refresh(author)
 
     return author
+
+
+@pytest.fixture()
+def book(session):
+    book = Book(year=1942, title='fundação', author_id=1)
+
+    session.add(book)
+    session.commit()
+    session.refresh(book)
+
+    return book
