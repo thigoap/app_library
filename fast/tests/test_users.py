@@ -34,7 +34,7 @@ def test_create_user_empty_string_400(client):
     assert response.json() == {'detail': 'Empty string'}
 
 
-def test_create_user_existing_username_400(client, user):
+def test_create_user_existing_username_409(client, user):
     response = client.post(
         '/users',
         json={
@@ -43,11 +43,11 @@ def test_create_user_existing_username_400(client, user):
             'password': 'secret',
         },
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {'detail': 'Username already exists'}
 
 
-def test_create_user_existing_email_400(client, user):
+def test_create_user_existing_email_409(client, user):
     response = client.post(
         '/users',
         json={
@@ -56,7 +56,7 @@ def test_create_user_existing_email_400(client, user):
             'password': 'secret',
         },
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {'detail': 'Email already exists'}
 
 
@@ -223,7 +223,7 @@ def test_patch_user_with_wrong_user_400(client, other_user, token):
     assert response.json() == {'detail': 'Not enough permissions'}
 
 
-def test_update_user_existing_username_400(client, user, token):
+def test_update_user_existing_username_409(client, user, token):
     response = client.put(
         f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
@@ -233,11 +233,11 @@ def test_update_user_existing_username_400(client, user, token):
             'password': 'secret',
         },
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {'detail': 'Username already exists'}
 
 
-def test_patch_user_existing_username_400(client, user, token):
+def test_patch_user_existing_username_409(client, user, token):
     response = client.patch(
         f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
@@ -247,11 +247,11 @@ def test_patch_user_existing_username_400(client, user, token):
             'password': 'secret',
         },
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {'detail': 'Username already exists'}
 
 
-def test_update_user_existing_email_400(client, user, token):
+def test_update_user_existing_email_409(client, user, token):
     response = client.put(
         f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
@@ -261,11 +261,11 @@ def test_update_user_existing_email_400(client, user, token):
             'password': 'secret',
         },
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {'detail': 'Email already exists'}
 
 
-def test_patch_user_existing_email_400(client, user, token):
+def test_patch_user_existing_email_409(client, user, token):
     response = client.patch(
         f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
@@ -275,7 +275,7 @@ def test_patch_user_existing_email_400(client, user, token):
             'password': 'secret',
         },
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {'detail': 'Email already exists'}
 
 

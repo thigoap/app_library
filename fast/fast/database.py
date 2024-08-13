@@ -26,12 +26,12 @@ def check_existing_users(session, user):
     if db_user:
         if db_user.username == sanitize(user.username):
             raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
+                status_code=HTTPStatus.CONFLICT,
                 detail='Username already exists',
             )
         elif db_user.email == user.email:
             raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
+                status_code=HTTPStatus.CONFLICT,
                 detail='Email already exists',
             )
 
@@ -44,7 +44,7 @@ def check_existing_users_patch(session, user):
         if db_user:
             if db_user.username == sanitize(user.username):
                 raise HTTPException(
-                    status_code=HTTPStatus.BAD_REQUEST,
+                    status_code=HTTPStatus.CONFLICT,
                     detail='Username already exists',
                 )
     if user.email:
@@ -54,7 +54,7 @@ def check_existing_users_patch(session, user):
         if db_user:
             if db_user.email == user.email:
                 raise HTTPException(
-                    status_code=HTTPStatus.BAD_REQUEST,
+                    status_code=HTTPStatus.CONFLICT,
                     detail='Email already exists',
                 )
 
