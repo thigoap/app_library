@@ -26,6 +26,9 @@ def test_create_author(session):
 
 
 def test_create_book(session):
+    new_author = Author(name='Isaac Asimov')
+    session.add(new_author)
+    session.commit()
     new_book = Book(year=1942, title='Fundação', author_id=1)
     session.add(new_book)
     session.commit()

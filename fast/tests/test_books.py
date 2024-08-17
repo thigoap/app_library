@@ -12,7 +12,7 @@ def test_read_books(client):
     assert response.json() == {'books': []}
 
 
-def test_read_books_with_books(client, book):
+def test_read_books_with_books(client, book, author):
     book_schema = BookPublic.model_validate(book).model_dump()
     response = client.get('/books')
     assert response.json() == {'books': [book_schema]}
@@ -29,13 +29,13 @@ def test_read_book(client, book):
     }
 
 
-def test_read_book_not_found_404(client, book):
+def test_read_book_not_found_404(client, book, author):
     response = client.get('/books/2')
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {'detail': 'Book not found'}
 
 
-def test_list_books_should_return_5_books(session, client, token):
+def test_list_books_should_return_5_books(session, client, author, token):
     expected_books = 5
     session.bulk_save_objects(BookFactory.create_batch(5))
     session.commit()
@@ -48,7 +48,9 @@ def test_list_books_should_return_5_books(session, client, token):
     assert len(response.json()['books']) == expected_books
 
 
-def test_list_books_filter_title_should_return_3_books(session, client, token):
+def test_list_books_filter_title_should_return_3_books(
+    session, client, token, author
+):
     expected_books = 3
     session.bulk_save_objects(BookFactory.create_batch(3, title='fundação'))
     session.bulk_save_objects(
@@ -65,7 +67,9 @@ def test_list_books_filter_title_should_return_3_books(session, client, token):
     assert len(response.json()['books']) == expected_books
 
 
-def test_list_books_filter_year_should_return_3_books(session, client, token):
+def test_list_books_filter_year_should_return_3_books(
+    session, client, token, author
+):
     expected_books = 3
     session.bulk_save_objects(BookFactory.create_batch(3, year=1950))
     session.bulk_save_objects(BookFactory.create_batch(2, year=1999))
@@ -81,18 +85,18 @@ def test_list_books_filter_year_should_return_3_books(session, client, token):
 
 
 def test_list_books_filter_title_and_year_should_return_2_books(
-    session, client, token
+    session, client, token, author
 ):
     expected_books = 2
     session.bulk_save_objects(BookFactory.create_batch(3, year=1950))
     session.bulk_save_objects(
-        BookFactory.create_batch(2, year=1983, title='A Cor da Magia')
+        BookFactory.create_batch(2, year=1983, title='a cor da magia')
     )
 
     session.commit()
 
     response = client.get(
-        '/books/?year=1983&title=Magia',
+        '/books/?year=1983&title=magia',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -103,12 +107,12 @@ def test_create_book(client, author, token):
     response = client.post(
         '/books/',
         headers={'Authorization': f'Bearer {token}'},
-        json={'year': 1949, 'title': '1984', 'author_id': 1},
+        json={'year': 1949, 'title': '1984', 'author_id': author.id},
     )
     assert response.json() == {
         'year': 1949,
         'title': '1984',
-        'author_id': 1,
+        'author_id': author.id,
         'id': 1,
     }
 
@@ -176,11 +180,11 @@ def test_patch_book(client, token, author, book):
         'year': 1942,
         'title': 'segunda fundação',
         'author_id': 1,
-        'id': book.id
+        'id': book.id,
     }
 
 
-def test_patch_book_empty_string_400(client, token, book):
+def test_patch_book_empty_string_400(client, token, author, book):
     response = client.patch(
         f'/books/{book.id}',
         headers={'Authorization': f'Bearer {token}'},
@@ -192,7 +196,7 @@ def test_patch_book_empty_string_400(client, token, book):
     assert response.json() == {'detail': 'Empty string'}
 
 
-def test_patch_book_conflict_409(client, token, book):
+def test_patch_book_conflict_409(client, token, author, book):
     response = client.patch(
         f'/books/{book.id}',
         headers={'Authorization': f'Bearer {token}'},
@@ -216,7 +220,7 @@ def test_patch_book_no_author_404(client, token, book):
     }
 
 
-def test_patch_book_not_found_404(client, token, book):
+def test_patch_book_not_found_404(client, token, author, book):
     response = client.patch(
         '/books/10',
         json={'year': 1942, 'title': 'Fundação', 'author_id': 1},
@@ -226,7 +230,7 @@ def test_patch_book_not_found_404(client, token, book):
     assert response.json() == {'detail': 'Book not found.'}
 
 
-def test_delete_book(session, client, token):
+def test_delete_book(session, client, token, author):
     book = BookFactory()
 
     session.add(book)
